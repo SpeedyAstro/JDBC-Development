@@ -13,25 +13,35 @@ public class UserInputLogin {
         String user_email = sc.next();
         System.out.println("Enter password :");
         String user_pass = sc.next();
+        Connection connection = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/demo","root","792002"); // database connectivity
-            PreparedStatement ps = connection.prepareStatement("select * from register where email=? and password=?");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/demo","root","792002"); // database connectivity
+            ps = connection.prepareStatement("select * from register where email=? and password=?");
             ps.setString(1,user_email);
             ps.setString(2,user_pass);
 
-            ResultSet rs = ps.executeQuery();
+            rs = ps.executeQuery();
             if(rs.next()){
                 System.out.println("Login Successfully");
             }else{
                 System.out.println("Invalid email or password");
             }
-            ps.close();
-            rs.close();
-            connection.close();
         }
         catch (Exception e){
             e.printStackTrace();
+        }
+        finally {
+            try {
+                connection.close();
+                ps.close();
+                rs.close();
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 }
